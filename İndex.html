@@ -3,6 +3,487 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>patimamashop | Evcil Hayvan Dünyası</title>
+    <title>patimamashop | Sevimli Dostlarımızın Marketi</title>
+    <link rel="icon" type="image/png" href="https://www.google.com/favicon.ico">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#F97316',
+                            amber: '#F59E0B',
+                            light: '#FFF7ED',
+                            dark: '#7C2D12'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        brand: ['Quicksand', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-amber-50/40 text-slate-800 flex flex-col min-h-screen font-sans">
+
+    <!-- Üst Duyuru Çubuğu -->
+    <div class="bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs py-2 px-4 text-center font-bold tracking-wide shadow-xs">
+        🐾 500 TL ve Üzeri Kargo Bedava! | Orijinal Ürün Garantisi
+    </div>
+
+    <!-- Başlık / Menü -->
+    <header class="bg-white/95 backdrop-blur-md sticky top-0 z-40 border-b border-orange-100 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+            <a href="#" class="flex items-center gap-2 group">
+                <div class="w-10 h-10 rounded-2xl bg-brand-orange text-white flex items-center justify-center text-xl shadow-md shadow-orange-500/20 group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-paw"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-xl font-bold tracking-tight text-slate-900 font-brand leading-none">patimama<span class="text-brand-orange">shop</span></span>
+                    <span class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Evcil Hayvan Dünyası</span>
+                </div>
+            </a>
+
+            <!-- Arama Kutusu -->
+            <div class="hidden md:flex flex-1 max-w-md mx-4 relative">
+                <input id="searchInput" type="text" oninput="handleSearch(this.value)" placeholder="Mama, kraker, tırmalama tahtası ara..." 
+                    class="w-full pl-10 pr-4 py-2 bg-slate-100 rounded-full text-sm border border-transparent focus:border-brand-orange focus:bg-white focus:outline-none transition-all">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-slate-400 text-sm"></i>
+            </div>
+
+            <!-- Sepet Butonu -->
+            <button onclick="toggleCart()" class="relative bg-brand-light hover:bg-orange-100 text-brand-orange p-2.5 rounded-full transition-colors flex items-center gap-2">
+                <i class="fa-solid fa-basket-shopping text-lg"></i>
+                <span id="cartCountBadge" class="bg-brand-orange text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Renkli Banner / Karşılama Alanı -->
+    <section class="bg-gradient-to-r from-orange-400 via-orange-500 to-amber-500 text-white py-10 px-4 sm:px-6 shadow-md">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="text-center md:text-left space-y-2">
+                <span class="bg-white/20 text-white text-xs uppercase px-3 py-1 rounded-full font-bold tracking-wider border border-white/20">Taze & Orijinal Ürünler</span>
+                <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight font-brand">Can Dostunuza En İyi Bakım!</h1>
+                <p class="text-white/90 text-sm max-w-md">Kedi mamaları, köpek aksesuarları, kuş yemleri ve eğitici oyuncaklar kapınızda.</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-2">
+                <button onclick="filterCategory('kedi', this)" class="bg-white text-brand-orange px-4 py-2 rounded-xl font-bold text-sm shadow hover:bg-orange-50 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-cat"></i> Kedi Dünyası
+                </button>
+                <button onclick="filterCategory('kopek', this)" class="bg-white text-brand-orange px-4 py-2 rounded-xl font-bold text-sm shadow hover:bg-orange-50 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-dog"></i> Köpek Dünyası
+                </button>
+                <button onclick="filterCategory('kus', this)" class="bg-white text-brand-orange px-4 py-2 rounded-xl font-bold text-sm shadow hover:bg-orange-50 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-dove"></i> Kuş Dünyası
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Kategori Filtre Butonları -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+        <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar">
+            <button onclick="filterCategory('all', this)" class="cat-btn px-4 py-2 rounded-xl bg-brand-orange text-white text-sm font-semibold whitespace-nowrap shadow-sm">Tüm Ürünler</button>
+            <button onclick="filterCategory('kedi', this)" class="cat-btn px-4 py-2 rounded-xl bg-white text-slate-700 hover:bg-orange-50 border border-slate-200 text-sm font-semibold whitespace-nowrap">🐱 Kedi Dünyası</button>
+            <button onclick="filterCategory('kedi-oyun', this)" class="cat-btn px-4 py-2 rounded-xl bg-white text-slate-700 hover:bg-orange-50 border border-slate-200 text-sm font-semibold whitespace-nowrap">🧶 Kedi Eşya & Oyun</button>
+            <button onclick="filterCategory('kopek', this)" class="cat-btn px-4 py-2 rounded-xl bg-white text-slate-700 hover:bg-orange-50 border border-slate-200 text-sm font-semibold whitespace-nowrap">🐶 Köpek Dünyası</button>
+            <button onclick="filterCategory('kopek-oyun', this)" class="cat-btn px-4 py-2 rounded-xl bg-white text-slate-700 hover:bg-orange-50 border border-slate-200 text-sm font-semibold whitespace-nowrap">🎾 Köpek Eşya & Oyun</button>
+            <button onclick="filterCategory('kus', this)" class="cat-btn px-4 py-2 rounded-xl bg-white text-slate-700 hover:bg-orange-50 border border-slate-200 text-sm font-semibold whitespace-nowrap">🦜 Kuş Yem & Oyuncak</button>
+        </div>
+    </div>
+
+    <!-- Ürün Grid Alanı -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
+        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+    </main>
+
+    <!-- Sepet Çekmecesi (Drawer) -->
+    <div id="cartModal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs hidden justify-end">
+        <div class="bg-white w-full max-w-md h-full flex flex-col shadow-2xl">
+            <div class="p-4 border-b flex items-center justify-between bg-slate-50">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-basket-shopping text-brand-orange"></i>
+                    <h3 class="font-bold text-lg text-slate-800 font-brand">Alışveriş Sepetiniz</h3>
+                </div>
+                <button onclick="toggleCart()" class="text-slate-400 hover:text-slate-600 p-1">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Kargo Çubuğu -->
+            <div class="p-4 bg-orange-50 border-b border-orange-100">
+                <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                    <span id="shippingText">Kargo Bedava için 500 TL üzeri harcayın!</span>
+                    <span id="shippingStatusText" class="text-brand-orange font-bold"></span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-2">
+                    <div id="shippingProgressBar" class="bg-brand-orange h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div id="cartItemsList" class="flex-1 overflow-y-auto p-4 space-y-4"></div>
+
+            <div class="p-4 border-t bg-slate-50 space-y-3">
+                <div class="flex justify-between text-base font-bold text-slate-800">
+                    <span>Toplam Tutar:</span>
+                    <span id="cartTotalPrice" class="text-brand-orange">0.00 TL</span>
+                </div>
+                <button onclick="openCheckoutModal()" class="w-full bg-brand-orange hover:bg-orange-600 text-white font-bold py-3 rounded-xl transition shadow-md shadow-orange-500/20 flex items-center justify-center gap-2">
+                    <span>Siparişi Tamamla</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sipariş Formu Modalı -->
+    <div id="checkoutModal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
+            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <h2 class="text-2xl font-bold text-slate-800 mb-4 font-brand">Sipariş Bilgileri</h2>
+            
+            <form id="orderForm" onsubmit="handleOrderSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Ad Soyad</label>
+                    <input required type="text" placeholder="Adınız Soyadınız" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-brand-orange">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Telefon</label>
+                    <input required type="tel" placeholder="05XX XXX XX XX" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-brand-orange">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Teslimat Adresi</label>
+                    <textarea required rows="2" placeholder="Mahalle, Cadde, No, Daire, İlçe/Şehir" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-brand-orange"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Ödeme Yöntemi</label>
+                    <select class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-brand-orange bg-white">
+                        <option>Kapıda Nakit / Kredi Kartı</option>
+                        <option>Online Kredi Kartı</option>
+                        <option>Havale / EFT</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-xl transition shadow-lg">
+                    Siparişi Onayla & Gönder
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Alt Kısım -->
+    <footer class="bg-slate-900 text-slate-400 py-8 px-4 text-center text-xs mt-auto border-t border-slate-800">
+        <p class="font-bold text-slate-200 text-sm mb-1">patimamashop © 2026</p>
+        <p>Tüm hakları saklıdır. Can dostlarımız için sevgiyle hazırlandı.</p>
+    </footer>
+
+    <!-- JavaScript Uygulama Mantığı -->
+    <script>
+        // Patimama Shop Logolu Kart Şablonu (SVG)
+        const makeCardImage = (badgeText) => {
+            return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%23FFF7ED"/><stop offset="100%" stop-color="%23FED7AA"/></linearGradient></defs><rect width="600" height="400" fill="url(%23g)"/><circle cx="300" cy="170" r="75" fill="%23FB923C" opacity="0.15"/><text x="300" y="165" font-family="sans-serif" font-size="52" font-weight="900" fill="%23EA580C" text-anchor="middle">Patimama</text><text x="300" y="215" font-family="sans-serif" font-size="34" font-weight="800" fill="%237C2D12" text-anchor="middle">SHOP</text><rect x="180" y="245" width="240" height="34" rx="17" fill="%23F97316"/><text x="300" y="268" font-family="sans-serif" font-size="14" font-weight="700" fill="%23FFFFFF" text-anchor="middle">${encodeURIComponent(badgeText)}</text></svg>`;
+        };
+
+        const products = [
+            {
+                id: 1,
+                name: "Proplan Tavuklu Kısırlaştırılmış Kedi Maması (3 kg)",
+                category: "kedi",
+                badge: "🐱 Kedi Maması",
+                price: 400.00,
+                desc: "Zengin tavuk eti formülü, böbrek ve ideal kilo dengesi koruması.",
+                image: makeCardImage("🐱 Kedi Maması")
+            },
+            {
+                id: 2,
+                name: "Somonlu & Pirinçli Yetişkin Kedi Maması (2 kg)",
+                category: "kedi",
+                badge: "🐱 Kedi Maması",
+                price: 400.00,
+                desc: "Pırıl pırıl tüyler ve hassas sindirim desteği sağlayan özel içerik.",
+                image: makeCardImage("🐱 Kedi Maması")
+            },
+            {
+                id: 3,
+                name: "Kuzulu & Yaban Mersinli Yavru Kedi Maması",
+                category: "kedi",
+                badge: "🐱 Kedi Maması",
+                price: 450.00,
+                desc: "Bağışıklık güçlendirici yavru kedi gelişim formülü.",
+                image: makeCardImage("🐱 Yavru Kedi")
+            },
+            {
+                id: 4,
+                name: "Peluş Kedi Tırmalama Kulesi & Ponpon",
+                category: "kedi-oyun",
+                badge: "🧶 Kedi Eşya & Oyun",
+                price: 320.00,
+                desc: "Doğal jüt ipli tırmalama sütunu ve hareketli yaylı ponpon.",
+                image: makeCardImage("🧶 Tırmalama Kulesi")
+            },
+            {
+                id: 5,
+                name: "Çıngıraklı Tüy Kedi Oyun Oltası",
+                category: "kedi-oyun",
+                badge: "🧶 Kedi Eşya & Oyun",
+                price: 85.00,
+                desc: "Avcılık güdüsünü harekete geçiren elastik kedi oyun değneği.",
+                image: makeCardImage("🧶 Kedi Oltası")
+            },
+            {
+                id: 6,
+                name: "Biftekli Yetişkin Köpek Maması (15 kg)",
+                category: "kopek",
+                badge: "🐶 Köpek Maması",
+                price: 950.00,
+                desc: "Yüksek proteinli güçlü kas yapısı destekleyici kuru mama.",
+                image: makeCardImage("🐶 Köpek Maması")
+            },
+            {
+                id: 7,
+                name: "Dayanıklı Pamuk Düğüm Halat Oyuncağı",
+                category: "kopek-oyun",
+                badge: "🎾 Köpek Eşya & Oyun",
+                price: 110.00,
+                desc: "Diş ve diş eti sağlığını koruyan sağlam çekiştirme halatı.",
+                image: makeCardImage("🎾 Diş Halatı")
+            },
+            {
+                id: 8,
+                name: "Diş Kaşıyıcı Kauçuk Ödül Topu",
+                category: "kopek-oyun",
+                badge: "🎾 Köpek Eşya & Oyun",
+                price: 135.00,
+                desc: "İçine mama saklanabilen zeka ve ısırma egzersiz topu.",
+                image: makeCardImage("🎾 Ödül Topu")
+            },
+            {
+                id: 9,
+                name: "Lüks Muhabbet Kuşu Yemi (1 kg)",
+                category: "kus",
+                badge: "🦜 Kuş Yemi",
+                price: 120.00,
+                desc: "Sarı akdarı, aspur ve vitaminli tohum zengini dengeli karışım.",
+                image: makeCardImage("🦜 Kuş Yemi")
+            },
+            {
+                id: 10,
+                name: "Ballı & Meyveli Kuş Krakeri (3'lü Paket)",
+                category: "kus",
+                badge: "🦜 Kuş Yemi",
+                price: 95.00,
+                desc: "Fırınlanmış leziz meyve ve tohumlardan oluşan ödül krakeri.",
+                image: makeCardImage("🦜 Kuş Krakeri")
+            },
+            {
+                id: 11,
+                name: "Ahşap Boncuklu Kuş Salıncağı & Çan",
+                category: "kus",
+                badge: "🪶 Kuş Oyun & Eşya",
+                price: 75.00,
+                desc: "Doğal ahşap tünekli, çıngıraklı kafes oyun salıncağı.",
+                image: makeCardImage("🪶 Kuş Salıncağı")
+            }
+        ];
+
+        let cart = [];
+        let currentFilter = 'all';
+        let searchQuery = '';
+
+        function renderProducts() {
+            const grid = document.getElementById("productGrid");
+            grid.innerHTML = "";
+
+            const filtered = products.filter(p => {
+                const matchCategory = 
+                    currentFilter === 'all' ? true :
+                    currentFilter === 'kedi' ? (p.category === 'kedi' || p.category === 'kedi-oyun') :
+                    currentFilter === 'kopek' ? (p.category === 'kopek' || p.category === 'kopek-oyun') :
+                    p.category === currentFilter;
+
+                const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                    p.desc.toLowerCase().includes(searchQuery.toLowerCase());
+
+                return matchCategory && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-16 text-slate-400 font-bold">Aradığınız kriterlere uygun ürün bulunamadı.</div>`;
+                return;
+            }
+
+            filtered.forEach(p => {
+                grid.innerHTML += `
+                    <div class="bg-white rounded-2xl overflow-hidden border border-orange-100 shadow-sm hover:shadow-md transition-all flex flex-col">
+                        <div class="relative h-48 bg-orange-50 overflow-hidden flex items-center justify-center">
+                            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover">
+                            <span class="absolute top-2.5 left-2.5 bg-white/95 backdrop-blur-xs text-slate-800 text-[11px] font-bold px-2.5 py-1 rounded-full shadow-xs border border-orange-100">
+                                ${p.badge}
+                            </span>
+                        </div>
+                        <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-sm leading-snug font-brand">${p.name}</h3>
+                                <p class="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">${p.desc}</p>
+                            </div>
+                            <div class="flex items-center justify-between pt-3 border-t border-slate-100">
+                                <span class="font-extrabold text-brand-orange text-base">${p.price.toFixed(2)} TL</span>
+                                <button onclick="addToCart(${p.id})" class="bg-brand-orange hover:bg-orange-600 text-white text-xs font-bold px-3 py-2 rounded-xl transition flex items-center gap-1.5 shadow-xs">
+                                    <i class="fa-solid fa-plus"></i> Ekle
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function filterCategory(cat, btnElement) {
+            currentFilter = cat;
+            document.querySelectorAll(".cat-btn").forEach(btn => {
+                btn.className = "cat-btn px-4 py-2 rounded-xl bg-white text-slate-700 hover:bg-orange-50 border border-slate-200 text-sm font-semibold whitespace-nowrap transition-all";
+            });
+            if (btnElement && btnElement.classList.contains("cat-btn")) {
+                btnElement.className = "cat-btn px-4 py-2 rounded-xl bg-brand-orange text-white text-sm font-semibold whitespace-nowrap shadow-sm transition-all";
+            }
+            renderProducts();
+        }
+
+        function handleSearch(val) {
+            searchQuery = val;
+            renderProducts();
+        }
+
+        function addToCart(id) {
+            const prod = products.find(p => p.id === id);
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.qty++;
+            } else {
+                cart.push({ ...prod, qty: 1 });
+            }
+            updateCart();
+        }
+
+        function updateCart() {
+            const list = document.getElementById("cartItemsList");
+            const totalEl = document.getElementById("cartTotalPrice");
+            const countBadge = document.getElementById("cartCountBadge");
+            const progressBar = document.getElementById("shippingProgressBar");
+            const shippingStatusText = document.getElementById("shippingStatusText");
+            const shippingText = document.getElementById("shippingText");
+
+            list.innerHTML = "";
+            let total = 0;
+            let count = 0;
+
+            if (cart.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-12 text-slate-400 text-sm">
+                        <i class="fa-solid fa-bag-shopping text-4xl mb-2 text-slate-200"></i>
+                        <p>Sepetiniz şu anda boş.</p>
+                    </div>`;
+            } else {
+                cart.forEach(item => {
+                    total += item.price * item.qty;
+                    count += item.qty;
+                    list.innerHTML += `
+                        <div class="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <img src="${item.image}" class="w-14 h-14 object-cover rounded-lg">
+                            <div class="flex-1 min-w-0">
+                                <h4 class="text-xs font-bold text-slate-800 truncate font-brand">${item.name}</h4>
+                                <span class="text-xs font-bold text-brand-orange">${item.price.toFixed(2)} TL</span>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <button onclick="changeQty(${item.id}, -1)" class="w-6 h-6 bg-white border rounded text-xs">-</button>
+                                    <span class="text-xs font-bold">${item.qty}</span>
+                                    <button onclick="changeQty(${item.id}, 1)" class="w-6 h-6 bg-white border rounded text-xs">+</button>
+                                </div>
+                            </div>
+                            <button onclick="removeFromCart(${item.id})" class="text-slate-300 hover:text-red-500 p-1">
+                                <i class="fa-solid fa-trash-can text-sm"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+            }
+
+            totalEl.innerText = `${total.toFixed(2)} TL`;
+            countBadge.innerText = count;
+
+            const percent = Math.min((total / 500) * 100, 100);
+            progressBar.style.width = `${percent}%`;
+            if (total >= 500) {
+                shippingStatusText.innerText = "Kargo Bedava!";
+                shippingStatusText.className = "text-emerald-600 font-bold";
+                shippingText.innerText = "Tebrikler! Kargo bedava avantajı kazandınız.";
+            } else {
+                shippingStatusText.innerText = `${(500 - total).toFixed(2)} TL kaldı`;
+                shippingStatusText.className = "text-brand-orange font-bold";
+                shippingText.innerText = "Kargo Bedava için 500 TL üzeri harcayın!";
+            }
+        }
+
+        function changeQty(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.qty += delta;
+                if (item.qty <= 0) {
+                    cart = cart.filter(i => i.id !== id);
+                }
+            }
+            updateCart();
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(i => i.id !== id);
+            updateCart();
+        }
+
+        function toggleCart() {
+            const modal = document.getElementById("cartModal");
+            modal.classList.toggle("hidden");
+            modal.classList.toggle("flex");
+        }
+
+        function openCheckoutModal() {
+            if (cart.length === 0) {
+                alert("Sepetiniz boş! Lütfen önce ürün ekleyin.");
+                return;
+            }
+            toggleCart();
+            const modal = document.getElementById("checkoutModal");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+        }
+
+        function closeCheckoutModal() {
+            const modal = document.getElementById("checkoutModal");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+        }
+
+        function handleOrderSubmit(e) {
+            e.preventDefault();
+            alert("Harika! Siparişiniz başarıyla alındı. Bizi tercih ettiğiniz için teşekkür ederiz!");
+            cart = [];
+            updateCart();
+            closeCheckoutModal();
+        }
+
+        renderProducts();
+        updateCart();
+    </script>
+</body>
+</html>
+
